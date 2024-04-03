@@ -1,3 +1,6 @@
+// mpicc hello.c
+// mpirun -n 4 a.out
+
 #include <mpi.h>
 #include <stdio.h>
 
