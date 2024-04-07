@@ -16,13 +16,13 @@
 
 #include "../common/book.h"
 
-#define N   (32 * 1024)
+#define N   (33 * 1024)
 
 __global__ void add( int *a, int *b, int *c ) {
-    int tid = blockIdx.x;
+    int tid = threadIdx.x + blockIdx.x * blockDim.x;
     while (tid < N) {
         c[tid] = a[tid] + b[tid];
-        tid += gridDim.x;
+        tid += blockDim.x * gridDim.x;
     }
 }
 
@@ -52,7 +52,7 @@ int main( void ) {
     HANDLE_ERROR( cudaMemcpy( dev_b, b, N * sizeof(int),
                               cudaMemcpyHostToDevice ) );
 
-    add<<<128,1>>>( dev_a, dev_b, dev_c );
+    add<<<128,128>>>( dev_a, dev_b, dev_c );
 
     // copy the array 'c' back from the GPU to the CPU
     HANDLE_ERROR( cudaMemcpy( c, dev_c, N * sizeof(int),
