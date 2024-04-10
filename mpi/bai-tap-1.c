@@ -11,13 +11,17 @@ int main(int argc, char** argv) {
     
     int number;
     if (world_rank == 0) {
-        number = -1;
-        MPI_Send(&number, 1, MPI_INT, 1, 0, MPI_COMM_WORLD);
+        int A[10] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+        MPI_Send(A, 10, MPI_INT, 1, 0, MPI_COMM_WORLD);
     } else if (world_rank == 1) {
-        MPI_Recv(&number, 1, MPI_INT, 0, 0, MPI_COMM_WORLD,
+        int B[10], C[10];
+        MPI_Recv(B, 10, MPI_INT, 0, 0, MPI_COMM_WORLD,
                  MPI_STATUS_IGNORE);
-        printf("Process 1 received number %d from process 0\n",
-               number);
+        for(int i = 0; i < 10; i++){
+            C[i] = B[i]*2;
+            printf("%d ", C[i]);
+        }
     }
+    printf("\n");
     MPI_Finalize();
 }
